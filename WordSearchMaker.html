@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Wordsearch Maker</title>
+
+      <!-- Libraries -->
+      <script src="js/shared/angular.min.js"></script>
+      <script src="js/shared/jquery.min.js"></script>
+  </head>
+  <body ng-app="WordSearchMaker">
+
+    <h1>Word Search Maker</h1>
+
+    <div ng-controller="WordSearchMakerCtrl" ng-init="init()">
+      <!-- Setting it all up -->
+      <div>
+        <h2>Word Search Size:</h2>
+        Width: <input type="number" ng-model="width" min="10" max="100" /><br />
+        Length: <input type="number" ng-model="length" min="10" max="100" /><br />
+        <input type="button" ng-click="save(width, length)" value="Save" /><br /><br />
+
+        <input type="text" ng-model="word" /><br />
+        <input type="button" ng-click="addWord(word)" value="Add Word" />
+      </div>
+      <!-- The Word List -->
+      <div>
+        <h2>Word List</h2>
+        <div ng-repeat="word in words">
+          {{word}}
+        </div>
+      </div>
+      <!-- The Game -->
+      <div>
+        <div ng-repeat="row in grid">
+          {{row.join("  ")}}
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- Modules -->
+    <script src="js/app.js"></script>
+
+    <!-- Controllers -->
+    <script src="js/controllers/controller.js"></script>
+
+  </body>
+</html>
