@@ -24,9 +24,7 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
     var wordLength = word.length;
     var row = Math.floor(Math.random() * $scope.length);
     var col = Math.floor(Math.random() * $scope.width);
-    //based on (row, col), figure out which directions we can go and pick one
     //TODO: deal with collisions
-    //TODO: diagonal words
     //TODO: handle directions better
     var directions = [];
     if ((row + wordLength) < $scope.length) {
@@ -37,47 +35,56 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
     }
     if ((col + wordLength) < $scope.width) {
       directions.push("right");
+      if(directions.indexOf("down") != -1) {
+        directions.push("diag-down-right");
+      }
+      if(directions.indexOf("up") != -1) {
+        directions.push("diag-up-right");
+      }
     }
     if ((col - wordLength) > 0) {
       directions.push("left");
-    }
-    var dirPos = Math.floor(Math.random() * directions.length);
-    var dir = directions[dirPos];
-    console.log("Putting " + word + " at (" + row + ", " + col + "), going " + dir);
-    var endRow = row;
-    var endCol = col;
-    var step = 1;
-    if (dir == "up") {
-      step = -1;
-      endRow = row - wordLength;
-    } else if (dir == "down") {
-      endRow = row + wordLength;
-    } else if (dir == "left") {
-      step = -1;
-      endCol = col - wordLength;
-    } else if (dir == "right") {
-      endCol = col + wordLength;
+      if(directions.indexOf("down") != -1) {
+        directions.push("diag-down-left");
+      }
+      if(directions.indexOf("up") != -1) {
+        directions.push("diag-up-left");
+      }
     }
 
-    if (dir == "up" || dir == "down") {
-      var i = 0;
-      while(row != endRow) {
-        $scope.grid[row][col] = word.charAt(i);
-        row += step;
-        i++;
-      }
-    } else if(dir == "left" || dir == "right") {
-      var i = 0;
-      while(col != endCol) {
-        $scope.grid[row][col] = word.charAt(i);
-        col += step;
-        i++;
-      }
+    var dirPos = Math.floor(Math.random() * directions.length);
+    var dir = directions[dirPos];
+    var rowStep = 1;
+    var colStep = 1;
+    if (dir == "up") {
+      rowStep = -1;
+      colStep = 0;
+    } else if (dir == "down") {
+      colStep = 0;
+    } else if (dir == "left") {
+      colStep = -1;
+      rowStep = 0;
+    } else if (dir == "right") {
+      rowStep = 0;
+    } else if (dir == "diag-up-left") {
+      rowStep = -1;
+      colStep = -1;
+    } else if (dir == "diag-up-right") {
+      rowStep = -1;
+    } else if (dir == "diag-down-left") {
+      colStep = -1;
+    } else if (dir == "diag-down-right") {
+      //good with the defaults
+    }
+
+    for (var i = 0; i < wordLength; i ++) {
+      $scope.grid[row][col] = word.charAt(i);
+      row += rowStep;
+      col += colStep;
     }
 
     $scope.words.push(word);
     $scope.fillGrid();
-    console.log($scope);
   };
 
   $scope.initGrid = function() {
