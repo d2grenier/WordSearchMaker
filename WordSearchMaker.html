@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Wordsearch Maker</title>
-    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 
       <!-- Libraries -->
       <script src="js/shared/angular.min.js"></script>
       <script src="js/shared/jquery.min.js"></script>
+      <script src="js/shared/bootstrap.min.js"></script>
   </head>
   <body ng-app="WordSearchMaker">
 
@@ -53,20 +54,45 @@
             </div>
           </div>
         </div>
-        <!-- The Word List -->
         <div class="row">
+          <!-- The Word List -->
           <div class="col-md-3 col-md-offset-3">
             <h2>Word List</h2>
             <div ng-repeat="word in words">
               {{word}}
             </div>
           </div>
-          <!-- The Game -->
+
+
           <div class="col-md-6">
-            <h2>Game</h2>
-            <div style="font-family: Courier; font-size: 24px;">
-              <div ng-repeat="row in grid">
-                {{row.join(" ")}}
+
+            <ul id="myTabs" class="nav nav-tabs" role="tablist" style="display: inline-block;">
+             <li role="presentation" class="active">
+               <a href="#game" aria-controls="game" role="tab" data-toggle="tab">Game</a>
+             </li>
+             <li role="presentation">
+               <a href="#answer" aria-controls="answer" role="tab" data-toggle="tab">Answer Key</a>
+             </li>
+            </ul>
+
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="game">
+                <!-- The Game -->
+                <h2>Game</h2>
+                <div style="font-family: Courier; font-size: 24px;">
+                  <div ng-repeat="row in grid">
+                    {{row.join(" ")}}
+                  </div>
+                </div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="answer">
+                <!-- The Game -->
+                <h2>Answer Key</h2>
+                <div style="font-family: Courier; font-size: 24px;">
+                  <div ng-repeat="row in answers">
+                    {{row.join(" ")}}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
