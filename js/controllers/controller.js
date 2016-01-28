@@ -7,15 +7,13 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
     $scope.width = 10;
     $scope.length = 10;
     $scope.words = [];
-    $scope.initGrid();
-    //$scope.fillGrid();
+    $scope.initGrids();
   };
 
   $scope.save = function(w, l) {
     $scope.width = w;
     $scope.length = l;
-    $scope.initGrid();
-    //TODO: re-insert words if we change size mid-way through
+    $scope.initGrids();
     if($scope.words.length > 0) {
       for (var i = 0; i < $scope.words.length; i++) {
         $scope.insertWord($scope.words[i]);
@@ -103,7 +101,7 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       var checkRow = row;
       var checkCol = col;
       for (var i = 0; i < wordLength; i ++) {
-        var currChar = $scope.grid[checkRow][checkCol];
+        var currChar = $scope.answers[checkRow][checkCol];
         if (currChar != "-" && currChar != word.charAt(i)) {
           collision = true;
           break;
@@ -115,34 +113,28 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       if (!collision) {
         for (var i = 0; i < wordLength; i ++) {
           $scope.grid[row][col] = word.charAt(i);
+          $scope.answers[row][col] = word.charAt(i);
           row += rowStep;
           col += colStep;
         }
         placed = true;
       }
     }
-    //$scope.fillGrid();
   };
 
-  $scope.initGrid = function() {
+  $scope.initGrids = function() {
     $scope.grid = [];
+    $scope.answers = [];
     for (i = 0; i < $scope.width; i++) {
-      var row = []
+      var row1 = [];
+      var row2 = [];
       for (j = 0; j < $scope.length; j++) {
-        row.push("-");
+        var rand = Math.floor(Math.random() * uppercase.length)
+        row1.push(uppercase.charAt(rand));
+        row2.push("-");
       }
-      $scope.grid.push(row);
-    }
-  };
-
-  $scope.fillGrid = function() {
-    for (i = 0; i < $scope.width; i++) {
-      for (j = 0; j < $scope.length; j++) {
-        if ($scope.grid[i][j] == "-") {
-          var rand = Math.floor(Math.random() * uppercase.length)
-          $scope.grid[i][j] = uppercase.charAt(rand);
-        }
-      }
+      $scope.grid.push(row1);
+      $scope.answers.push(row2);
     }
   };
 
