@@ -59,7 +59,7 @@
           <div class="col-md-3 col-md-offset-3">
             <h2>Word List</h2>
             <div ng-repeat="word in words">
-              {{word}}
+              <span id="{{word}}">{{word}}</span>
             </div>
           </div>
 
@@ -81,7 +81,10 @@
                 <h2>Game</h2>
                 <div style="font-family: Courier; font-size: 24px;">
                   <div ng-repeat="row in grid">
-                    {{row.join(" ")}}
+                    <span ng-repeat="item in row track by $index" id="item-{{$parent.$index}}-{{$index}}" ng-mousedown="mouseDownLetter($parent.$index, $index, item)"
+                        ng-mouseup="mouseUpLetter($parent.$index, $index)" ng-mouseenter="mouseEnterLetter($parent.$index, $index, item)" >
+                      {{item}}
+                    </span>
                   </div>
                 </div>
               </div>

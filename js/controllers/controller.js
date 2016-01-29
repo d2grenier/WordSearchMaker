@@ -7,6 +7,8 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
     $scope.width = 10;
     $scope.length = 10;
     $scope.words = [];
+    $scope.selecting = false;
+    $scope.guess = "";
     $scope.initGrids();
   };
 
@@ -56,8 +58,39 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       $scope.words.push(word);
       $scope.insertWord(word);
     } else {
-      //TODO: some indication that it's a duplicate
+      //TODO: some better indication that it's a duplicate
       console.log("Duplicate word: " + word);
+    }
+  }
+
+  $scope.mouseDownLetter = function(row, col, item) {
+    $scope.selecting = true;
+    $('#item-' + row + '-' + col).css("border","2px solid red");
+    $scope.guess += item;
+  }
+
+  $scope.mouseUpLetter = function(row, col) {
+    $scope.selecting = false;
+    //Check if the user has found a word in the list
+    if($scope.words.indexOf($scope.guess) != -1) {
+      //Cross the word off in the word list
+      $('#' + $scope.guess).css("text-decoration", "line-through");
+      $('#' + $scope.guess).css("text-decoration-color", "red");
+      //TODO: Outline the word in GREEN
+    } else {
+      //Clear the selection
+    }
+    $scope.guess = '';
+  }
+
+  $scope.mouseEnterLetter = function(row, col, item) {
+    //TODO: probably better to set it up so the border follows the mouse, and
+    //then just check the start and end point to determine which letters
+    //have been selected. Saves the trouble associated with backtracking, and
+    //makes diagonals easier to handle.
+    if($scope.selecting) {
+      $('#item-' + row + '-' + col).css("border","2px solid red");
+      $scope.guess += item;
     }
   }
 
