@@ -2,12 +2,17 @@
 app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
 
   var uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var letterWidth = 29;
+  var letterHeight = 34;
 
   $scope.init = function() {
     $scope.width = 10;
     $scope.length = 10;
     $scope.words = [];
     $scope.selecting = false;
+    $scope.start = [];
+    $scope.end = [];
+    $scope.current = [];
     $scope.guess = "";
     $scope.initGrids();
   };
@@ -50,7 +55,7 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       }
     }
     return directions;
-  }
+  };
 
   $scope.addWord = function(word) {
     word = word.toUpperCase();
@@ -61,38 +66,91 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       //TODO: some better indication that it's a duplicate
       console.log("Duplicate word: " + word);
     }
-  }
+  };
 
   $scope.mouseDownLetter = function(row, col, item) {
     $scope.selecting = true;
-    $('#item-' + row + '-' + col).css("border","2px solid red");
-    $scope.guess += item;
-  }
+    $scope.start = { row: row, col: col};
+    var pos = $('#item-' + row + '-' + col).offset();
+    $('#selection').css({
+       left:  pos.left - 7,
+       top:   pos.top - 2
+    });
+    $('#selection').show();
+  };
 
   $scope.mouseUpLetter = function(row, col) {
     $scope.selecting = false;
-    //Check if the user has found a word in the list
-    if($scope.words.indexOf($scope.guess) != -1) {
-      //Cross the word off in the word list
-      $('#' + $scope.guess).css("text-decoration", "line-through");
-      $('#' + $scope.guess).css("text-decoration-color", "red");
-      //TODO: Outline the word in GREEN
-    } else {
-      //Clear the selection
+    $scope.end = { row: row, col: col};
+    var guess = '';
+    if ($scope.start.row == $scope.end.row && $scope.start.col != $scope.end.col) { //Horizontal
+      if($scope.start.col < $scope.end.col) {
+        for(var i = $scope.start.col; i <= $scope.end.col; i++) {
+          guess += $scope.grid[$scope.start.row][i];
+        }
+      } else {
+        for(var i = $scope.start.col; i >= $scope.end.col; i--) {
+          guess += $scope.grid[$scope.start.row][i];
+        }
+      }
+    } else if ($scope.start.row != $scope.end.row && $scope.start.col == $scope.end.col) { //Vertical
+      if($scope.start.row < $scope.end.row) {
+        for(var i = $scope.start.row; i <= $scope.end.row; i++) {
+          guess += $scope.grid[i][$scope.start.col];
+        }
+      } else {
+        for(var i = $scope.start.row; i >= $scope.end.row; i--) {
+          guess += $scope.grid[i][$scope.start.col];
+        }
+      }
     }
-    $scope.guess = '';
-  }
+    //Check if the user has found a word in the list
+    //TODO: maybe double check against the answer key?
+    if($scope.words.indexOf(guess) != -1) {
+      //Cross the word off in the word list
+      $('#' + guess).css("text-decoration", "line-through");
+      $('#' + guess).css("text-decoration-color", "red");
+      //TODO: Outline the word in GREEN
+    }
+    $('#selection').hide();
+    $('#selection').css({
+      width: letterWidth,
+      height: letterHeight,
+    });
+  };
 
   $scope.mouseEnterLetter = function(row, col, item) {
-    //TODO: probably better to set it up so the border follows the mouse, and
-    //then just check the start and end point to determine which letters
-    //have been selected. Saves the trouble associated with backtracking, and
-    //makes diagonals easier to handle.
     if($scope.selecting) {
-      $('#item-' + row + '-' + col).css("border","2px solid red");
-      $scope.guess += item;
+      $scope.current = { row: row, col: col};
+      //Horizontal
+      if($scope.start.row == $scope.current.row && $scope.start.col != $scope.current.col) {
+        var diff = $scope.current.col - $scope.start.col;
+        var currWidth = $('#selection').width();
+        if(diff > 0) {
+          $('#selection').width(currWidth + letterWidth);
+        } else if (diff < 0) {
+          $('#selection').width(currWidth + letterWidth);
+          var leftPos = $('#selection').offset().left;
+          $('#selection').css({
+            left:  leftPos - letterWidth,
+          });
+        }
+      } else if ($scope.start.row != $scope.current.row && $scope.start.col == $scope.current.col) { //Vertical
+        var diff = $scope.current.row - $scope.start.row;
+        var currHeight = $('#selection').height();
+        if(diff > 0) {
+          $('#selection').height(currHeight + letterHeight);
+        } else if (diff < 0) {
+          $('#selection').height(currHeight + letterHeight);
+          var topPos = $('#selection').offset().top;
+          $('#selection').css({
+            top:  topPos - letterHeight,
+          });
+        }
+      }
+      //TODO: handle diagonals
     }
-  }
+  };
 
   $scope.insertWord = function(word) {
     var wordLength = word.length;

@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Wordsearch Maker</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-
-      <!-- Libraries -->
-      <script src="js/shared/angular.min.js"></script>
-      <script src="js/shared/jquery.min.js"></script>
-      <script src="js/shared/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Libraries -->
+    <script src="js/shared/angular.min.js"></script>
+    <script src="js/shared/jquery.min.js"></script>
+    <script src="js/shared/bootstrap.min.js"></script>
   </head>
   <body ng-app="WordSearchMaker">
 
@@ -79,9 +79,10 @@
               <div role="tabpanel" class="tab-pane active" id="game">
                 <!-- The Game -->
                 <h2>Game</h2>
-                <div style="font-family: Courier; font-size: 24px;">
+                <div id="selection"></div>
+                <div style="font-family: Courier; font-size: 24px;" >
                   <div ng-repeat="row in grid">
-                    <span ng-repeat="item in row track by $index" id="item-{{$parent.$index}}-{{$index}}" ng-mousedown="mouseDownLetter($parent.$index, $index, item)"
+                    <span class="letter" ng-repeat="item in row track by $index" id="item-{{$parent.$index}}-{{$index}}" ng-mousedown="mouseDownLetter($parent.$index, $index, item)"
                         ng-mouseup="mouseUpLetter($parent.$index, $index)" ng-mouseenter="mouseEnterLetter($parent.$index, $index, item)" >
                       {{item}}
                     </span>

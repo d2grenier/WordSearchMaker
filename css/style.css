@@ -1,0 +1,46 @@
+
+.rectangle {
+  width: 200px;
+  height: 100px;
+  border: 2px solid #F00;
+  border-radius: 50px;
+}
+
+.left-to-right {
+  -webkit-transform : rotate(45deg);
+  -moz-transform : rotate(45deg);
+  -ms-transform : rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.right-to-left {
+  -webkit-transform : rotate(315deg);
+  -moz-transform : rotate(315deg);
+  -ms-transform : rotate(315deg);
+  transform: rotate(315deg);
+}
+
+.circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  border: 2px solid #F00;
+}
+
+.letter {
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;
+  z-index: 5;
+}
+
+#selection {
+  width: 29px;
+  height: 28px;
+  border: 1px solid red;
+  display: none;
+  position: fixed;
+  border-radius: 25px;
+  z-index: -1;
+}
