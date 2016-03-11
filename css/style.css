@@ -6,20 +6,6 @@
   border-radius: 50px;
 }
 
-.left-to-right {
-  -webkit-transform : rotate(45deg);
-  -moz-transform : rotate(45deg);
-  -ms-transform : rotate(45deg);
-  transform: rotate(45deg);
-}
-
-.right-to-left {
-  -webkit-transform : rotate(315deg);
-  -moz-transform : rotate(315deg);
-  -ms-transform : rotate(315deg);
-  transform: rotate(315deg);
-}
-
 .circle {
   width: 100px;
   height: 100px;
