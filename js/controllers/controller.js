@@ -8,7 +8,9 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
   $scope.init = function() {
     $scope.width = 10;
     $scope.length = 10;
+    $scope.word = "";
     $scope.words = [];
+    $scope.foundWords = [];
     $scope.selecting = false;
     $scope.start = [];
     $scope.end = [];
@@ -57,15 +59,21 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
     return directions;
   };
 
-  $scope.addWord = function(word) {
-    word = word.toUpperCase();
-    if ($scope.words.indexOf(word) == -1) {
-      $scope.words.push(word);
-      $scope.insertWord(word);
-    } else {
-      //TODO: some better indication that it's a duplicate
-      console.log("Duplicate word: " + word);
+  $scope.handleKeyPress = function(event) {
+    if (event.which === 13) {
+      $scope.addWord();
     }
+  };
+
+  $scope.addWord = function() {
+    $scope.word = $scope.word.toUpperCase();
+    if ($scope.words.indexOf($scope.word) == -1) {
+      $scope.words.push($scope.word);
+      $scope.insertWord($scope.word);
+    } else {
+      alert($scope.word + " is already in your word list.");
+    }
+    $scope.word = "";
   };
 
   $scope.mouseDownLetter = function(row, col, item) {
@@ -73,8 +81,8 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
     $scope.start = { row: row, col: col};
     var pos = $('#item-' + row + '-' + col).offset();
     $('#selection').css({
-       left:  pos.left - 7,
-       top:   pos.top - 2
+       left:  pos.left - (letterWidth/2) + 7,
+       top:   pos.top - (letterHeight/2)
     });
     $('#selection').show();
   };
@@ -106,11 +114,20 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
     }
     //Check if the user has found a word in the list
     //TODO: maybe double check against the answer key?
-    if($scope.words.indexOf(guess) != -1) {
+    if($scope.words.indexOf(guess) != -1 && $scope.foundWords.indexOf(guess) == -1) {
+      $scope.foundWords.push(guess);
       //Cross the word off in the word list
       $('#' + guess).css("text-decoration", "line-through");
       $('#' + guess).css("text-decoration-color", "red");
-      //TODO: Outline the word in GREEN
+      //Outline the found word in green
+      var selectionDiv = $('#selection');
+      selectionDiv.before('<div id="found-' + guess + '" class="found"><div>');
+      $('#found-' + guess).css({
+        width: selectionDiv.width(),
+        height: selectionDiv.height(),
+        left: selectionDiv.offset().left,
+        top: selectionDiv.offset().top - (letterHeight/2) + 5
+      });
     }
     $('#selection').hide();
     $('#selection').css({

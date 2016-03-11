@@ -46,10 +46,10 @@
             <h2>Add Words</h2>
             <div class="row">
               <div class="col-md-4">
-                <input type="text" ng-model="word" />
+                <input type="text" ng-model="word" ng-keypress="handleKeyPress($event)" />
               </div>
               <div class="col-md-4">
-                <input type="button" ng-click="addWord(word)" value="Add Word" />
+                <input type="button" ng-click="addWord()" value="Add Word" />
               </div>
             </div>
           </div>

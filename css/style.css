@@ -44,3 +44,12 @@
   border-radius: 25px;
   z-index: -1;
 }
+
+.found {
+  width: 29px;
+  height: 28px;
+  border: 1px solid green;
+  position: fixed;
+  border-radius: 25px;
+  z-index: -1;
+}
