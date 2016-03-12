@@ -162,7 +162,7 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
   $scope.mouseDownLetter = function(row, col, item) {
     $scope.selecting = true;
     $scope.start = { row: row, col: col};
-    var pos = getLetter(row, col).offset();
+    var pos = getLetter(row, col).position();
     $('#selection').css({
        left:  pos.left - 5,
        top:   pos.top
@@ -187,7 +187,7 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
         var diff = $scope.current.col - $scope.start.col;
         $('#selection').width((Math.abs(diff) + 1) * letterWidth);
         if (diff < 0) {
-          var leftPos = $('#selection').offset().left;
+          var leftPos = $('#selection').position().left;
           $('#selection').css({
             left:  leftPos - letterWidth,
           });
@@ -197,7 +197,7 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
         var diff = $scope.current.row - $scope.start.row;
         $('#selection').height((Math.abs(diff) + 1) * letterHeight);
         if (diff < 0) {
-          var topPos = $('#selection').offset().top;
+          var topPos = $('#selection').position().top;
           $('#selection').css({
             top:  topPos - letterHeight,
           });
@@ -207,7 +207,7 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
           if($scope.start.col < $scope.current.row) { //Right
             var colDiff = $scope.current.col - $scope.start.col;
             //Reset the left/top position in case it was mangled when we got into Horizontal or Vertical movement
-            var startPos = getLetter($scope.start.row, $scope.start.col).offset();
+            var startPos = getLetter($scope.start.row, $scope.start.col).position();
             $('#selection').css({
               width:    (Math.abs(colDiff) + 1) * diagonalLetterWidth,
               height:   diagonalLetterHeight,
@@ -260,8 +260,8 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       $('#found-' + guess).css({
         width:  selectionDiv.width(),
         height: selectionDiv.height(),
-        left:   selectionDiv.offset().left,
-        top:    selectionDiv.offset().top
+        left:   selectionDiv.position().left,
+        top:    selectionDiv.position().top
       });
       var transform = $('#selection').css('transform');
       var transformOrigin = $('#selection').css('transform-origin');
@@ -309,8 +309,8 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
   };
 
   function calculateRotation() {
-    var startPoint = getLetter($scope.start.row, $scope.start.col).offset();
-    var endPoint = getLetter($scope.current.row, $scope.current.col).offset();
+    var startPoint = getLetter($scope.start.row, $scope.start.col).position();
+    var endPoint = getLetter($scope.current.row, $scope.current.col).position();
     var b = endPoint.left - startPoint.left;
     var c = endPoint.top - startPoint.top;
     var angle = Math.atan2(c, b) * 180 / Math.PI;

@@ -26,7 +26,7 @@
   height: 28px;
   border: 1px solid red;
   display: none;
-  position: fixed;
+  position: absolute;
   border-radius: 25px;
   z-index: -1;
 }
@@ -35,7 +35,7 @@
   width: 29px;
   height: 28px;
   border: 1px solid green;
-  position: fixed;
+  position: absolute;
   border-radius: 25px;
   z-index: -1;
 }
