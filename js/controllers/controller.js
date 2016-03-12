@@ -5,7 +5,7 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
   var letterWidth = 29;
   var letterHeight = 34;
   var diagonalLetterHeight = 31;
-  var diagonalLetterWidth = 31;
+  var diagonalLetterWidth = 40;
 
   $scope.init = function() {
     $scope.width = 10;
@@ -80,147 +80,6 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       alert($scope.word + " is already in your word list.");
     }
     $scope.word = "";
-  };
-
-  $scope.mouseDownLetter = function(row, col, item) {
-    $scope.selecting = true;
-    $scope.start = { row: row, col: col};
-    var pos = getLetter(row, col).offset();
-    $('#selection').css({
-       left:  pos.left - (letterWidth/2) + 7,
-       top:   pos.top - (letterHeight/2)
-    });
-    $('#selection').show();
-  };
-
-  $scope.mouseUpLetter = function(row, col) {
-    $scope.selecting = false;
-    $scope.end = { row: row, col: col};
-    var guess = '';
-    if ($scope.start.row == $scope.end.row && $scope.start.col != $scope.end.col) { //Horizontal
-      if($scope.start.col < $scope.end.col) {
-        for(var i = $scope.start.col; i <= $scope.end.col; i++) {
-          guess += $scope.grid[$scope.start.row][i];
-        }
-      } else {
-        for(var i = $scope.start.col; i >= $scope.end.col; i--) {
-          guess += $scope.grid[$scope.start.row][i];
-        }
-      }
-    } else if ($scope.start.row != $scope.end.row && $scope.start.col == $scope.end.col) { //Vertical
-      if($scope.start.row < $scope.end.row) {
-        for(var i = $scope.start.row; i <= $scope.end.row; i++) {
-          guess += $scope.grid[i][$scope.start.col];
-        }
-      } else {
-        for(var i = $scope.start.row; i >= $scope.end.row; i--) {
-          guess += $scope.grid[i][$scope.start.col];
-        }
-      }
-    } else { //Diagonal
-      if($scope.start.col < $scope.end.col) { //Right
-          if($scope.start.row < $scope.end.row) { //Down
-            //start.row, start.col;
-            var ccol = $scope.start.col;
-            for(var i = $scope.start.row; i <= $scope.end.row; i++) {
-              guess += $scope.grid[i][ccol];
-              ccol += 1;
-            }
-          }
-      }
-
-    }
-    //Check if the user has found a word in the list
-    //TODO: maybe double check against the answer key? just in case a random collection of chars matches
-    //one of the words
-    if($scope.words.indexOf(guess) != -1 && $scope.foundWords.indexOf(guess) == -1) {
-      $scope.foundWords.push(guess);
-      //Cross the word off in the word list
-      $('#' + guess).css("text-decoration", "line-through");
-      $('#' + guess).css("text-decoration-color", "red");
-      //Outline the found word in green
-      var selectionDiv = $('#selection');
-      selectionDiv.before('<div id="found-' + guess + '" class="found"><div>');
-      $('#found-' + guess).css({
-        width: selectionDiv.width(),
-        height: selectionDiv.height(),
-        left: selectionDiv.offset().left,
-        top: selectionDiv.offset().top - (letterHeight/2) + 5
-      });
-    }
-    $('#selection').hide();
-    $('#selection').css({
-      width: letterWidth,
-      height: letterHeight,
-    });
-  };
-
-  $scope.mouseEnterLetter = function(row, col, item) {
-    if($scope.selecting) {
-      $scope.current = { row: row, col: col};
-      //Horizontal
-      if($scope.start.row == $scope.current.row && $scope.start.col != $scope.current.col) {
-        var diff = $scope.current.col - $scope.start.col;
-        var currWidth = $('#selection').width();
-        $('#selection').width(currWidth + letterWidth);
-        if (diff < 0) {
-          var leftPos = $('#selection').offset().left;
-          $('#selection').css({
-            left:  leftPos - letterWidth,
-          });
-        }
-      } else if ($scope.start.row != $scope.current.row && $scope.start.col == $scope.current.col) { //Vertical
-        var diff = $scope.current.row - $scope.start.row;
-        var currHeight = $('#selection').height();
-        $('#selection').height(currHeight + letterHeight);
-        if (diff < 0) {
-          var topPos = $('#selection').offset().top;
-          $('#selection').css({
-            top:  topPos - letterHeight,
-          });
-        }
-      } else { //Diagonal
-        if($scope.start.row < $scope.current.row) { //Down
-          if($scope.start.col < $scope.current.row) { //Right
-            var vDiff = $scope.current.row - $scope.start.row; //+ve
-            var hDiff = $scope.current.col - $scope.start.row; //+ve
-            var currHeight = $('#selection').height();
-            var currWidth = $('#selection').width();
-            var topPos = $('#selection').offset().top;
-            var leftPos = $('#selection').offset().left;
-            //Reset the left/top position in case it was mangled when we got into Horizontal or Vertical movement
-            var startPos = getLetter($scope.start.row, $scope.start.col).offset();
-            $('#selection').css({
-              width : currWidth + diagonalLetterWidth,
-              height: diagonalLetterHeight,
-              left:  startPos.left + (letterWidth/2) - 3,
-              top:   startPos.top - (letterHeight/2) - 5
-            });
-            var angle = calculateRotation();
-            $('#selection').css('transform', 'rotate(' + angle + 'deg)');
-            $('#selection').css('transform-origin', 'top left');
-          } else { //Left
-
-          }
-        } else { //UP
-          if($scope.start.col < $scope.current.row) { //Right
-
-          } else { //Left
-
-          }
-        }
-
-      }
-    }
-  };
-
-  function calculateRotation() {
-    var startPoint = getLetter($scope.start.row, $scope.start.col).offset();
-    var endPoint = getLetter($scope.current.row, $scope.current.col).offset();
-    var b = endPoint.left - startPoint.left;
-    var c = endPoint.top - startPoint.top;
-    var angle = Math.atan2(c, b) * 180 / Math.PI;
-    return Math.round(angle);
   };
 
   $scope.insertWord = function(word) {
@@ -298,6 +157,164 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       $scope.grid.push(row1);
       $scope.answers.push(row2);
     }
+  };
+
+  $scope.mouseDownLetter = function(row, col, item) {
+    $scope.selecting = true;
+    $scope.start = { row: row, col: col};
+    var pos = getLetter(row, col).offset();
+    $('#selection').css({
+       left:  pos.left - 5,
+       top:   pos.top
+    });
+    $('#selection').show();
+  };
+
+  $scope.mouseUpLetter = function(row, col) {
+    $scope.selecting = false;
+    $scope.end = { row: row, col: col};
+    var guess = calculateGuess();
+    checkGuess(guess);
+    resetSelection();
+  };
+
+  $scope.mouseEnterLetter = function(row, col, item) {
+    if($scope.selecting) {
+      $scope.current = { row: row, col: col};
+      //Horizontal
+      if($scope.start.row == $scope.current.row && $scope.start.col != $scope.current.col) {
+        rotateSelection('none', 'none');
+        var diff = $scope.current.col - $scope.start.col;
+        $('#selection').width((Math.abs(diff) + 1) * letterWidth);
+        if (diff < 0) {
+          var leftPos = $('#selection').offset().left;
+          $('#selection').css({
+            left:  leftPos - letterWidth,
+          });
+        }
+      } else if ($scope.start.row != $scope.current.row && $scope.start.col == $scope.current.col) { //Vertical
+        rotateSelection('none', 'none');
+        var diff = $scope.current.row - $scope.start.row;
+        $('#selection').height((Math.abs(diff) + 1) * letterHeight);
+        if (diff < 0) {
+          var topPos = $('#selection').offset().top;
+          $('#selection').css({
+            top:  topPos - letterHeight,
+          });
+        }
+      } else { //Diagonal
+        if($scope.start.row < $scope.current.row) { //Down
+          if($scope.start.col < $scope.current.row) { //Right
+            var colDiff = $scope.current.col - $scope.start.col;
+            //Reset the left/top position in case it was mangled when we got into Horizontal or Vertical movement
+            var startPos = getLetter($scope.start.row, $scope.start.col).offset();
+            $('#selection').css({
+              width:    (Math.abs(colDiff) + 1) * diagonalLetterWidth,
+              height:   diagonalLetterHeight,
+              left:     startPos.left + 10,
+              top:      startPos.top - 10
+            });
+            var angle = calculateRotation();
+            rotateSelection('rotate(' + angle + 'deg)', 'top left');
+          } else { //Left
+
+          }
+        } else { //UP
+          if($scope.start.col < $scope.current.row) { //Right
+
+          } else { //Left
+
+          }
+        }
+
+      }
+    }
+  };
+
+  function rotateSelection(val, origin) {
+    $('#selection').css('transform', val);
+    $('#selection').css('transform-origin', origin);
+  };
+
+  function resetSelection() {
+    $('#selection').hide();
+    $('#selection').css({
+      width: letterWidth,
+      height: letterHeight,
+    });
+    rotateSelection('none', 'none');
+  };
+
+  function checkGuess(guess) {
+    //Check if the user has found a word in the list
+    //TODO: maybe double check against the answer key? just in case a random collection of chars matches
+    //one of the words
+    if($scope.words.indexOf(guess) != -1 && $scope.foundWords.indexOf(guess) == -1) {
+      $scope.foundWords.push(guess);
+      //Cross the word off in the word list
+      $('#' + guess).css("text-decoration", "line-through");
+      $('#' + guess).css("text-decoration-color", "red");
+      //Outline the found word in green
+      var selectionDiv = $('#selection');
+      selectionDiv.before('<div id="found-' + guess + '" class="found"><div>');
+      $('#found-' + guess).css({
+        width:  selectionDiv.width(),
+        height: selectionDiv.height(),
+        left:   selectionDiv.offset().left,
+        top:    selectionDiv.offset().top
+      });
+      var transform = $('#selection').css('transform');
+      var transformOrigin = $('#selection').css('transform-origin');
+      $('#found-' + guess).css('transform', transform);
+      $('#found-' + guess).css('transform-origin', transformOrigin);
+    }
+  };
+
+  function calculateGuess() {
+    var guess = '';
+    if ($scope.start.row == $scope.end.row && $scope.start.col != $scope.end.col) { //Horizontal
+      if($scope.start.col < $scope.end.col) {
+        for(var i = $scope.start.col; i <= $scope.end.col; i++) {
+          guess += $scope.grid[$scope.start.row][i];
+        }
+      } else {
+        for(var i = $scope.start.col; i >= $scope.end.col; i--) {
+          guess += $scope.grid[$scope.start.row][i];
+        }
+      }
+    } else if ($scope.start.row != $scope.end.row && $scope.start.col == $scope.end.col) { //Vertical
+      if($scope.start.row < $scope.end.row) {
+        for(var i = $scope.start.row; i <= $scope.end.row; i++) {
+          guess += $scope.grid[i][$scope.start.col];
+        }
+      } else {
+        for(var i = $scope.start.row; i >= $scope.end.row; i--) {
+          guess += $scope.grid[i][$scope.start.col];
+        }
+      }
+    } else { //Diagonal
+      if($scope.start.col < $scope.end.col) { //Right
+          if($scope.start.row < $scope.end.row) { //Down
+            //start.row, start.col;
+            var ccol = $scope.start.col;
+            for(var i = $scope.start.row; i <= $scope.end.row; i++) {
+              guess += $scope.grid[i][ccol];
+              ccol += 1;
+            }
+          }
+      }
+
+    }
+    return guess;
+  };
+
+  function calculateRotation() {
+    var startPoint = getLetter($scope.start.row, $scope.start.col).offset();
+    var endPoint = getLetter($scope.current.row, $scope.current.col).offset();
+    var b = endPoint.left - startPoint.left;
+    var c = endPoint.top - startPoint.top;
+    var angle = Math.atan2(c, b) * 180 / Math.PI;
+    return Math.round(angle);
   };
 
 }]);
