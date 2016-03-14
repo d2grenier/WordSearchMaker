@@ -5,7 +5,7 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
   var letterWidth = 29;
   var letterHeight = 34;
   var diagonalLetterHeight = 31;
-  var diagonalLetterWidth = 40;
+  var diagonalLetterWidth = 44;
 
   $scope.init = function() {
     $scope.width = 10;
@@ -204,26 +204,55 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
         }
       } else { //Diagonal
         if($scope.start.row < $scope.current.row) { //Down
+          var colDiff = $scope.current.col - $scope.start.col;
+          //Adjust the width and height
+          $('#selection').css({
+            width:    (Math.abs(colDiff) + 1) * diagonalLetterWidth,
+            height:   diagonalLetterHeight
+          });
+          //Calculate and set the angle of rotation.
+          var angle = calculateRotation();
+          rotateSelection('rotate(' + angle + 'deg)', 'top left');
+          //Direction Specific adjustments
+          var startPos = getLetter($scope.start.row, $scope.start.col).position();
           if($scope.start.col < $scope.current.row) { //Right
-            var colDiff = $scope.current.col - $scope.start.col;
             //Reset the left/top position in case it was mangled when we got into Horizontal or Vertical movement
-            var startPos = getLetter($scope.start.row, $scope.start.col).position();
             $('#selection').css({
-              width:    (Math.abs(colDiff) + 1) * diagonalLetterWidth,
-              height:   diagonalLetterHeight,
-              left:     startPos.left + 10,
-              top:      startPos.top - 10
+              left: startPos.left + 10,
+              top:  startPos.top - 10
             });
-            var angle = calculateRotation();
-            rotateSelection('rotate(' + angle + 'deg)', 'top left');
           } else { //Left
-
+            //Reset the left/top position in case it was mangled when we got into Horizontal or Vertical movement
+            $('#selection').css({
+              left: startPos.left + 30,
+              top:  startPos.top + 10
+            });
           }
         } else { //UP
+          var colDiff = $scope.current.col - $scope.start.col;
+          //Adjust the width and height
+          $('#selection').css({
+            width:    (Math.abs(colDiff) + 1) * diagonalLetterWidth,
+            height:   diagonalLetterHeight
+          });
+          //Calculate and set the angle of rotation.
+          var angle = calculateRotation();
+          rotateSelection('rotate(' + angle + 'deg)', 'top left');
+          //Direction Specific adjustments
+          var startPos = getLetter($scope.start.row, $scope.start.col).position();
           if($scope.start.col < $scope.current.row) { //Right
-
+            //TODO: weird thing when we go across the whole diagonal: selection jumps down and shifts upward
+            //Reset the left/top position in case it was mangled when we got into Horizontal or Vertical movement
+            $('#selection').css({
+              left: startPos.left - 15,
+              top:  startPos.top + 15
+            });
           } else { //Left
-
+            //Reset the left/top position in case it was mangled when we got into Horizontal or Vertical movement
+            $('#selection').css({
+              left: startPos.left + 7,
+              top:  startPos.top + 33
+            });
           }
         }
 
@@ -243,6 +272,10 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       height: letterHeight,
     });
     rotateSelection('none', 'none');
+    $scope.start = [];
+    $scope.end = [];
+    $scope.current = [];
+    $scope.guess = "";
   };
 
   function checkGuess(guess) {
@@ -256,12 +289,13 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       $('#' + guess).css("text-decoration-color", "red");
       //Outline the found word in green
       var selectionDiv = $('#selection');
+      var startPos = getLetter($scope.start.row, $scope.start.col).position();
       selectionDiv.before('<div id="found-' + guess + '" class="found"><div>');
       $('#found-' + guess).css({
         width:  selectionDiv.width(),
         height: selectionDiv.height(),
-        left:   selectionDiv.position().left,
-        top:    selectionDiv.position().top
+        left:   startPos.left,
+        top:    startPos.top
       });
       var transform = $('#selection').css('transform');
       var transformOrigin = $('#selection').css('transform-origin');
@@ -301,9 +335,28 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
               guess += $scope.grid[i][ccol];
               ccol += 1;
             }
+         } else { //UP
+           var ccol = $scope.start.col;
+           for(var i = $scope.start.row; i >= $scope.end.row; i--) {
+             guess += $scope.grid[i][ccol];
+             ccol += 1;
+           }
+         }
+      } else { // Left
+        if($scope.start.row < $scope.end.row) { //Down
+          var ccol = $scope.start.col;
+          for(var i = $scope.start.row; i <= $scope.end.row; i++) {
+            guess += $scope.grid[i][ccol];
+            ccol -= 1;
           }
+       } else { //UP
+         var ccol = $scope.start.col;
+         for(var i = $scope.start.row; i >= $scope.end.row; i--) {
+           guess += $scope.grid[i][ccol];
+           ccol -= 1;
+         }
+       }
       }
-
     }
     return guess;
   };
