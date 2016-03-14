@@ -170,11 +170,17 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
     $('#selection').show();
   };
 
-  $scope.mouseUpLetter = function(row, col) {
+  $scope.mouseUpLetter = function($event, row, col) {
+    $event.stopPropagation();
     $scope.selecting = false;
     $scope.end = { row: row, col: col};
     var guess = calculateGuess();
     checkGuess(guess);
+    resetSelection();
+  };
+
+  $scope.mouseUp = function() {
+    $scope.selecting = false;
     resetSelection();
   };
 

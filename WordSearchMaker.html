@@ -11,7 +11,7 @@
     <script src="js/shared/jquery.min.js"></script>
     <script src="js/shared/bootstrap.min.js"></script>
   </head>
-  <body ng-app="WordSearchMaker">
+  <body ng-app="WordSearchMaker" ng-controller="WordSearchMakerCtrl" ng-init="init()" ng-mouseup="mouseUp()">
 
     <div class="container-fluid">
       <div class="row">
@@ -19,7 +19,7 @@
           <h1>Word Search Maker</h1>
         </div>
       </div>
-      <div class="row container-fluid" ng-controller="WordSearchMakerCtrl" ng-init="init()">
+      <div class="row container-fluid">
         <!-- Setting it all up -->
         <div class="row">
           <div class="col-md-3 col-md-offset-3">
@@ -83,7 +83,7 @@
                 <div style="font-family: Courier; font-size: 24px;" >
                   <div ng-repeat="row in grid">
                     <span class="letter" ng-repeat="item in row track by $index" id="item-{{$parent.$index}}-{{$index}}" ng-mousedown="mouseDownLetter($parent.$index, $index, item)"
-                        ng-mouseup="mouseUpLetter($parent.$index, $index)" ng-mouseenter="mouseEnterLetter($parent.$index, $index, item)" >
+                        ng-mouseup="mouseUpLetter($event, $parent.$index, $index)" ng-mouseenter="mouseEnterLetter($parent.$index, $index, item)" >
                       {{item}}
                     </span>
                   </div>
