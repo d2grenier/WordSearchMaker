@@ -287,20 +287,8 @@ app.controller('WordSearchMakerCtrl', ['$scope', function($scope) {
       //Cross the word off in the word list
       $('#' + guess).css("text-decoration", "line-through");
       $('#' + guess).css("text-decoration-color", "red");
-      //Outline the found word in green
-      var selectionDiv = $('#selection');
-      var startPos = getLetter($scope.start.row, $scope.start.col).position();
-      selectionDiv.before('<div id="found-' + guess + '" class="found"><div>');
-      $('#found-' + guess).css({
-        width:  selectionDiv.width(),
-        height: selectionDiv.height(),
-        left:   startPos.left,
-        top:    startPos.top
-      });
-      var transform = $('#selection').css('transform');
-      var transformOrigin = $('#selection').css('transform-origin');
-      $('#found-' + guess).css('transform', transform);
-      $('#found-' + guess).css('transform-origin', transformOrigin);
+      //Clone the selection element and keep it permanently in green
+      $('#selection').clone().attr({'id': 'found-' + guess, 'class': 'found'}).insertAfter($('#selection'));
     }
   };
 
